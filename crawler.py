@@ -97,7 +97,11 @@ def crawl(urlFrontier, maxurls):
 
 			r = requests.get(url)
 			soup = BeautifulSoup(r.text, 'html.parser')
-			#print soup
+
+			try:
+				print soup.title
+			except:
+				continue
 
 			# Find anchor (href) links
 			size = find_links(soup, baseurl, size, urlFrontier, 'a', 'href', url)
