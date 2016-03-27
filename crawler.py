@@ -32,7 +32,7 @@ def is_html(url):
 
 
 def eecs_umich(url):
-	valid = ['http://www.eecs.umich.edu', 'https://www.eecs.umich.edu', 'http://eecs.umich.edu', 'https://eecs.umich.edu']
+	valid = ['https://en.wikipedia.org', 'http://en.wikipedia.org', 'http://en.wikipedia.org', 'https://en.wikipedia.org']
 	for ext in valid:
 		if url.startswith(ext):
 			return True
@@ -69,11 +69,10 @@ def find_links(soup, baseurl, size, urlFrontier, tag, attribute, url):
 
 
 def crawl(urlFrontier, maxurls):
-	baseurl = "http://www.eecs.umich.edu"
+	baseurl = "http://en.wikipedia.org"
 	size = len(urlFrontier)
 	count = 0
 	while (size > 0) and (count < maxurls):
-
 		# Pop url from front
 		url = urlFrontier.popleft()
 		size -= 1
@@ -122,6 +121,8 @@ if __name__ == "__main__":
 		url = normalize_link(url)
 		urlFrontier.append(url)
 	infile.close()
+
+
 
 	maxurls = int(sys.argv[2])
 
