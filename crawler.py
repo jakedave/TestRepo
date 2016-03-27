@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 
 
 def normalize_link(url):
+	"""Get rid of extraneous URL endings"""
 	newurl = url
 	if newurl.endswith('/'):
 		newurl = newurl[:-1]
@@ -14,11 +15,13 @@ def normalize_link(url):
 
 
 def init():
+	"""Initalize list of seen URLs"""
 	global pasturls
 	pasturls = []
 
 
 def is_html(url):
+	"""Check if html file"""
 	# Check if google and .cgi
 	if ('google' in url) or ('.cgi' in url) or ('.php' in url):
 		return False
@@ -32,6 +35,7 @@ def is_html(url):
 
 
 def valid_URL(url):
+	"""Check if URL is in domain of accepted URLs"""
 	valid = ['https://en.wikipedia.org', 'http://en.wikipedia.org', 'http://en.wikipedia.org', 'https://en.wikipedia.org']
 	for ext in valid:
 		if url.startswith(ext):
@@ -40,6 +44,7 @@ def valid_URL(url):
 
 
 def visited(url):
+	"""Check if URL has been seen before"""
 	if url in pasturls:
 		return True
 	elif url == "/":
@@ -53,6 +58,7 @@ def visited(url):
 
 
 def find_links(soup, baseurl, size, urlFrontier, tag, attribute, url):
+	"""BFS search for links"""
 	newSize = size
 	for link in soup.find_all(tag):
 		newurl = link.get(attribute)
@@ -69,6 +75,7 @@ def find_links(soup, baseurl, size, urlFrontier, tag, attribute, url):
 
 
 def crawl(urlFrontier, maxurls):
+	"""Crawl baby, crawl!"""
 	baseurl = "http://en.wikipedia.org"
 	size = len(urlFrontier)
 	count = 0
