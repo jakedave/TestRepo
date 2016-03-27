@@ -31,7 +31,7 @@ def is_html(url):
 	return True
 
 
-def eecs_umich(url):
+def valid_URL(url):
 	valid = ['https://en.wikipedia.org', 'http://en.wikipedia.org', 'http://en.wikipedia.org', 'https://en.wikipedia.org']
 	for ext in valid:
 		if url.startswith(ext):
@@ -82,7 +82,7 @@ def crawl(urlFrontier, maxurls):
 			continue
 
 		# Check if from 'eecs.umich' domain
-		if not eecs_umich(url):
+		if not valid_URL(url):
 			continue
 
 		# Check if url has already been visited
@@ -98,9 +98,10 @@ def crawl(urlFrontier, maxurls):
 			soup = BeautifulSoup(r.text, 'html.parser')
 
 			try:
-				print soup.title
+				print soup.title.get_text()
 			except:
-				continue
+				pass
+
 
 			# Find anchor (href) links
 			size = find_links(soup, baseurl, size, urlFrontier, 'a', 'href', url)
