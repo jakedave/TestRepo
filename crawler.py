@@ -40,7 +40,7 @@ def is_html(URL):
 
 def valid_URL(URL):
 	"""Check if URL is in domain of accepted URLs"""
-	valid = ['https://en.wikipedia.org', 'http://en.wikipedia.org', 'http://en.wikipedia.org', 'https://en.wikipedia.org']
+	valid = ['https://www.hvst.com', 'http://www.hvst.com', 'https://www.hvst.com', 'http://www.hvst.com']
 	for ext in valid:
 		if URL.startswith(ext):
 			return True
@@ -85,7 +85,7 @@ def find_links(soup, baseURL, size, URL_Frontier, tag, attribute, URL):
 def crawl(URL_Frontier, maxURLs):
 
 	"""Crawl baby, crawl!"""
-	baseURL = "http://en.wikipedia.org"
+	baseURL = "https://www.hvst.com"
 	size = len(URL_Frontier)
 	count = 0
 	while (size > 0) and (count < maxURLs):
@@ -114,7 +114,9 @@ def crawl(URL_Frontier, maxURLs):
 			soup = BeautifulSoup(r.text, 'html.parser')
 
 			try:
-				print soup.title.get_text()
+				if URL.startswith("https://www.hvst.com/users") and URL.endswith("/about"):
+					print "HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
+					print soup.title.get_text()
 			except:
 				pass
 
@@ -133,7 +135,7 @@ def main():
 
 	seedFile = sys.argv[1]
 	maxURLs = int(sys.argv[2])
-	
+
 	infile = open(seedFile, "r")
 	for URL in infile:
 		URL = normalize_link(URL)
