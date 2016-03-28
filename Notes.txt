@@ -1,1 +1,1 @@
-# With Harvest: check if link starts with /users route - go from there
+# With Harvest: check if link starts with /users route and ends with /about
