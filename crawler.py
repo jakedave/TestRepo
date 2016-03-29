@@ -83,7 +83,6 @@ def find_links(soup, baseURL, size, URL_Frontier, tag, attribute, URL):
 
 
 def crawl(URL_Frontier, maxURLs):
-
 	"""Crawl baby, crawl!"""
 	baseURL = "https://www.hvst.com"
 	size = len(URL_Frontier)
@@ -107,23 +106,29 @@ def crawl(URL_Frontier, maxURLs):
 
 		# Download web page (except if 404 error)
 		try:
-			#print count, " ", URL
+			print count#, " ", URL
 			count += 1
 
-			r = requests.get(URL)
+			r = requests.get(URL, timeout=0.5, allow_redirects=False)
 			soup = BeautifulSoup(r.text, 'html.parser')
 
 			try:
 				if URL.startswith("https://www.hvst.com/users") and URL.endswith("/about"):
-					print "HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
+					#print "HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
 					print soup.title.get_text()
 			except:
 				pass
 
-
 			# Find anchor (href) links
 			size = find_links(soup, baseURL, size, URL_Frontier, 'a', 'href', URL)
+
+		#404
 		except requests.exceptions.ConnectionError as e:
+			print "404 ERROR"
+			continue
+		#timeout
+		except requests.exceptions.Timeout:
+			print "TIMEOUT"
 			continue
 
 		# Add URL to already visited URLs
@@ -144,6 +149,12 @@ def main():
 
 	init()
 	crawl(URL_Frontier, maxURLs)
+
+	print "\nCrawl Complete"
+	print "Shutting Down..."
+	print "Goodbye!"
+
+	sys.exit(0)
 
 
 
