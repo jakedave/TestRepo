@@ -124,11 +124,11 @@ def crawl(URL_Frontier, maxURLs):
 
 		#404
 		except requests.exceptions.ConnectionError as e:
-			print "404 ERROR"
+			print e
 			continue
 		#timeout
-		except requests.exceptions.Timeout:
-			print "TIMEOUT"
+		except requests.exceptions.Timeout as e:
+			print e
 			continue
 
 		# Add URL to already visited URLs
