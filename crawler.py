@@ -107,7 +107,7 @@ def crawl(URL_Frontier, maxURLs):
 
 		# Download web page (except if 404 error)
 		try:
-			print count, " ", URL
+			#print count, " ", URL
 			count += 1
 
 			r = requests.get(URL)
