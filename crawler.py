@@ -82,6 +82,29 @@ def find_links(soup, baseURL, size, URL_Frontier, tag, attribute, URL):
 	return newSize
 
 
+def parse(soup):
+	"""harvest specific parse"""
+	name = soup.title.get_text()
+
+	info = soup.find_all('div', class_="padding-top-bottom border-top-purple")#.get_text()
+	info = info[0]
+	info = info.find_all('br')
+	info = info[0]
+	info = info.get_text().strip()
+
+	name += ' ' + info
+
+	name = name.replace('\n', ' ')
+	name = name.replace('               ', ' ')
+
+	name = name.replace(' - About - Harvest ', ' ')
+	name = name.replace(' Role ', ' ')
+	name = name.replace(' Firm Type ', ' ')
+	name = name.replace(' Web Address ', ' ')
+
+	return name
+
+
 def crawl(URL_Frontier, maxURLs):
 	"""Crawl baby, crawl!"""
 	baseURL = "https://www.hvst.com"
@@ -106,7 +129,7 @@ def crawl(URL_Frontier, maxURLs):
 
 		# Download web page (except if 404 error)
 		try:
-			print count#, " ", URL
+			#print count#, " ", URL
 			count += 1
 
 			r = requests.get(URL, timeout=0.5, allow_redirects=False)
@@ -114,9 +137,10 @@ def crawl(URL_Frontier, maxURLs):
 
 			try:
 				if URL.startswith("https://www.hvst.com/users") and URL.endswith("/about"):
-					#print "HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
-					print soup.title.get_text()
+					info = parse(soup)
+					print info
 			except:
+				print "PASSED"
 				pass
 
 			# Find anchor (href) links
