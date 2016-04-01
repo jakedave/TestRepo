@@ -1,6 +1,7 @@
 import requests, sys, os
 from collections import deque
 from bs4 import BeautifulSoup
+import csv
 
 
 def normalize_link(URL):
@@ -81,12 +82,32 @@ def find_links(soup, baseURL, size, URL_Frontier, tag, attribute, URL):
 
 	return newSize
 
+def csv_prep(fullInfo):
+	"""further parse to prep for csv output"""
+	fullInfo = fullInfo.replace('\n', ' ')
+	fullInfo = fullInfo.replace('               ', ' ') #Why you do this harvest?
+
+	#Get rid of extra info
+	fullInfo = fullInfo.replace(' - About - Harvest ', ',')
+	fullInfo = fullInfo.replace(' Role ', ',')
+	fullInfo = fullInfo.replace(' Firm Type ', ',')
+	fullInfo = fullInfo.replace(' Web Address ', ',')
+
+	#Get rid of company description
+	fullInfo = fullInfo.replace(' Company Description ', "^&")
+	fullInfo = fullInfo.split("^&")
+	fullInfo = fullInfo[0]
+
+	#csv iterable list format
+	fullInfo = fullInfo.split(',')
+
+	return fullInfo
 
 def parse(soup):
-	"""harvest specific parse"""
+	"""harvest specific parse based on soup"""
 	name = soup.title.get_text()
 
-	info = soup.find_all('div', class_="padding-top-bottom border-top-purple")#.get_text()
+	info = soup.find_all('div', class_="padding-top-bottom border-top-purple")
 	info = info[0]
 	info = info.find_all('br')
 	info = info[0]
@@ -94,18 +115,11 @@ def parse(soup):
 
 	name += ' ' + info
 
-	name = name.replace('\n', ' ')
-	name = name.replace('               ', ' ')
-
-	name = name.replace(' - About - Harvest ', ' ')
-	name = name.replace(' Role ', ' ')
-	name = name.replace(' Firm Type ', ' ')
-	name = name.replace(' Web Address ', ' ')
-
-	return name
+	return csv_prep(name)
 
 
-def crawl(URL_Frontier, maxURLs):
+
+def crawl(URL_Frontier, maxURLs, c):
 	"""Crawl baby, crawl!"""
 	baseURL = "https://www.hvst.com"
 	size = len(URL_Frontier)
@@ -139,6 +153,7 @@ def crawl(URL_Frontier, maxURLs):
 				if URL.startswith("https://www.hvst.com/users") and URL.endswith("/about"):
 					info = parse(soup)
 					print info
+					c.writerow([info[0], info[1], info[2], info[3], info[4]])
 			except:
 				print "PASSED"
 				pass
@@ -172,7 +187,13 @@ def main():
 	infile.close()
 
 	init()
-	crawl(URL_Frontier, maxURLs)
+
+	c = csv.writer(open("MYFILE.csv", "wb"))
+	c.writerow(["Name","Company","Role","Firm Type","Website"])
+
+	crawl(URL_Frontier, maxURLs, c)
+
+	c.close()
 
 	print "\nCrawl Complete"
 	print "Shutting Down..."
