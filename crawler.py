@@ -107,11 +107,8 @@ def parse(soup):
 	"""harvest specific parse based on soup"""
 	name = soup.title.get_text()
 
-	info = soup.find_all('div', class_="padding-top-bottom border-top-purple")
-	info = info[0]
-	info = info.find_all('br')
-	info = info[0]
-	info = info.get_text().strip()
+	info = soup.find('div', class_="padding-top-bottom border-top-purple")
+	info = info.get_text()
 
 	name += ' ' + info
 
