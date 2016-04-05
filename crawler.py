@@ -88,7 +88,6 @@ def csv_prep(fullInfo):
 	fullInfo = fullInfo.replace('               ', ' ') #Why you do this harvest?
 
 	#Get rid of extra info
-	fullInfo = fullInfo.replace(' - About - Harvest ', ',')
 	fullInfo = fullInfo.replace(' Role ', ',')
 	fullInfo = fullInfo.replace(' Firm Type ', ',')
 	fullInfo = fullInfo.replace(' Web Address ', ',')
@@ -106,11 +105,12 @@ def csv_prep(fullInfo):
 def parse(soup):
 	"""harvest specific parse based on soup"""
 	name = soup.title.get_text()
+	name = name.replace(' - About - Harvest', ',')
 
 	info = soup.find('div', class_="padding-top-bottom border-top-purple")
 	info = info.get_text()
 
-	name += ' ' + info
+	name += info
 
 	return csv_prep(name)
 
@@ -187,10 +187,11 @@ def main():
 
 	c = csv.writer(open("MYFILE.csv", "wb"))
 	c.writerow(["Name","Company","Role","Firm Type","Website"])
+	
+
+	print "Starting Crawl...\n"
 
 	crawl(URL_Frontier, maxURLs, c)
-
-	c.close()
 
 	print "\nCrawl Complete"
 	print "Shutting Down..."
