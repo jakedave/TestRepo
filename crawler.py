@@ -87,20 +87,21 @@ def csv_prep(fullInfo):
 	fullInfo = fullInfo.replace('\n', ' ')
 	fullInfo = fullInfo.replace('               ', ' ') #Why you do this harvest?
 
-	#Get rid of extra info
+	# Get rid of extra info
 	fullInfo = fullInfo.replace(' Role ', '`')
 	fullInfo = fullInfo.replace(' Firm Type ', '`')
 	fullInfo = fullInfo.replace(' Web Address ', '`')
 
-	#Get rid of company description
+	# Get rid of company description
 	fullInfo = fullInfo.replace(' Company Description ', "^&")
 	fullInfo = fullInfo.replace(' Professional Details  Company ', '')
 	fullInfo = fullInfo.split("^&")
 	fullInfo = fullInfo[0]
 
-	#csv iterable list format
+	# csv iterable list format
 	fullInfo = fullInfo.split('`')
 
+	# Normalize list
 	while (len(fullInfo) < 5):
 		fullInfo.append('N/A')
 
@@ -111,7 +112,7 @@ def parse(soup):
 	name = soup.title.get_text()
 	name = name.replace(' - About - Harvest', '`')
 
-	info = soup.find('div', class_="padding-top-bottom border-top-purple")
+	info = soup.find('div', class_="padding-top-bottom border-top-purple") # Area where info found
 	info = info.get_text()
 
 	name += info
@@ -144,7 +145,6 @@ def crawl(URL_Frontier, maxURLs, c):
 
 		# Download web page (except if 404 error)
 		try:
-			#print count#, " ", URL
 			count += 1
 
 			r = requests.get(URL, timeout=0.5, allow_redirects=False)
@@ -153,7 +153,7 @@ def crawl(URL_Frontier, maxURLs, c):
 			try:
 				if URL.startswith("https://www.hvst.com/users") and URL.endswith("/about"):
 					info = parse(soup)
-					print info
+					print info # COMMENT THIS OUT IF YOU WISH FOR NO TERMINAL OUTPUT
 					c.writerow([info[0], info[1], info[2], info[3], info[4]])
 			except:
 				print "INFO NOT WRITTEN - IMPROPER FORMAT"
@@ -162,11 +162,11 @@ def crawl(URL_Frontier, maxURLs, c):
 			# Find anchor (href) links
 			size = find_links(soup, baseURL, size, URL_Frontier, 'a', 'href', URL)
 
-		#404
+		# 404
 		except requests.exceptions.ConnectionError as e:
 			print e
 			continue
-		#timeout
+		# timeout
 		except requests.exceptions.Timeout as e:
 			print e
 			continue
