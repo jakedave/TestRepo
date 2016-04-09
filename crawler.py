@@ -88,24 +88,28 @@ def csv_prep(fullInfo):
 	fullInfo = fullInfo.replace('               ', ' ') #Why you do this harvest?
 
 	#Get rid of extra info
-	fullInfo = fullInfo.replace(' Role ', ',')
-	fullInfo = fullInfo.replace(' Firm Type ', ',')
-	fullInfo = fullInfo.replace(' Web Address ', ',')
+	fullInfo = fullInfo.replace(' Role ', '`')
+	fullInfo = fullInfo.replace(' Firm Type ', '`')
+	fullInfo = fullInfo.replace(' Web Address ', '`')
 
 	#Get rid of company description
 	fullInfo = fullInfo.replace(' Company Description ', "^&")
+	fullInfo = fullInfo.replace(' Professional Details  Company ', '')
 	fullInfo = fullInfo.split("^&")
 	fullInfo = fullInfo[0]
 
 	#csv iterable list format
-	fullInfo = fullInfo.split(',')
+	fullInfo = fullInfo.split('`')
+
+	while (len(fullInfo) < 5):
+		fullInfo.append('N/A')
 
 	return fullInfo
 
 def parse(soup):
 	"""harvest specific parse based on soup"""
 	name = soup.title.get_text()
-	name = name.replace(' - About - Harvest', ',')
+	name = name.replace(' - About - Harvest', '`')
 
 	info = soup.find('div', class_="padding-top-bottom border-top-purple")
 	info = info.get_text()
@@ -152,7 +156,7 @@ def crawl(URL_Frontier, maxURLs, c):
 					print info
 					c.writerow([info[0], info[1], info[2], info[3], info[4]])
 			except:
-				print "PASSED"
+				print "INFO NOT WRITTEN - IMPROPER FORMAT"
 				pass
 
 			# Find anchor (href) links
