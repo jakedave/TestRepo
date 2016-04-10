@@ -164,7 +164,6 @@ def crawl(URL_Frontier, maxURLs, c):
 
 		# Download web page (except if 404 error)
 		try:
-			printProgress (count, maxURLs, prefix = '', suffix = 'Complete', decimals = 2, barLength = 100)
 			count += 1
 
 			r = requests.get(URL, timeout=0.5, allow_redirects=False)
@@ -193,6 +192,7 @@ def crawl(URL_Frontier, maxURLs, c):
 			continue
 
 		# Add URL to already visited URLs
+		printProgress (count, maxURLs, prefix = '', suffix = 'Complete', decimals = 2, barLength = 100)
 		pastURLs.append(URL)
 
 
@@ -218,7 +218,7 @@ def main():
 
 	crawl(URL_Frontier, maxURLs, c)
 
-	print "\nCrawl Complete"
+	print "Crawl Complete"
 	print "\n", infoCount, "names + info grabbed"
 	print "Shutting Down..."
 	print "Goodbye!"
@@ -234,7 +234,7 @@ if __name__ == "__main__":
 		main()
 
 	except KeyboardInterrupt:
-		print "\n", infoCount, "names + info grabbed"
+		print infoCount, "names + info grabbed"
 		print "\nShutting Down..."
 		print "Goodbye!"
 		sys.exit(0)
