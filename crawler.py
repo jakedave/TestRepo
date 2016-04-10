@@ -3,6 +3,23 @@ from collections import deque
 from bs4 import BeautifulSoup
 import csv
 
+#SOURCE: http://stackoverflow.com/questions/3173320/text-progress-bar-in-the-console?rq=1
+def printProgress (iteration, total, prefix = '', suffix = '', decimals = 2, barLength = 100):
+	"""
+	Call in a loop to create terminal progress bar
+	@params:
+		iterations  - Required  : current iteration (Int)
+		total       - Required  : total iterations (Int)
+	prefix      - Optional  : prefix string (Str)
+	suffix      - Optional  : suffix string (Str)
+	"""
+	filledLength    = int(round(barLength * iteration / float(total)))
+	percents        = round(100.00 * (iteration / float(total)), decimals)
+	bar             = '#' * filledLength + '-' * (barLength - filledLength)
+	sys.stdout.write('%s [%s] %s%s %s\r' % (prefix, bar, percents, '%', suffix)),
+	sys.stdout.flush()
+	if iteration == total:
+		print("\n")
 
 def normalize_link(URL):
 	"""Get rid of extraneous URL endings"""
@@ -18,8 +35,10 @@ def normalize_link(URL):
 
 
 def init():
-	"""Initalize list of seen URLs"""
+	"""Initalize list of seen URLs and amount of names grabbed"""
 	global pastURLs
+	global infoCount
+	infoCount = 0
 	pastURLs = []
 
 
@@ -145,6 +164,7 @@ def crawl(URL_Frontier, maxURLs, c):
 
 		# Download web page (except if 404 error)
 		try:
+			printProgress (count, maxURLs, prefix = '', suffix = 'Complete', decimals = 2, barLength = 100)
 			count += 1
 
 			r = requests.get(URL, timeout=0.5, allow_redirects=False)
@@ -153,10 +173,11 @@ def crawl(URL_Frontier, maxURLs, c):
 			try:
 				if URL.startswith("https://www.hvst.com/users") and URL.endswith("/about"):
 					info = parse(soup)
-					print info # COMMENT THIS OUT IF YOU WISH FOR NO TERMINAL OUTPUT
+					#print info # COMMENT THIS OUT IF YOU WISH FOR NO TERMINAL OUTPUT
 					c.writerow([info[0], info[1], info[2], info[3], info[4]])
+					infoCount += 1
 			except:
-				print "INFO NOT WRITTEN - IMPROPER FORMAT"
+				#print "INFO NOT WRITTEN - IMPROPER FORMAT"
 				pass
 
 			# Find anchor (href) links
@@ -164,11 +185,11 @@ def crawl(URL_Frontier, maxURLs, c):
 
 		# 404
 		except requests.exceptions.ConnectionError as e:
-			print e
+			#print e
 			continue
 		# timeout
 		except requests.exceptions.Timeout as e:
-			print e
+			#print e
 			continue
 
 		# Add URL to already visited URLs
@@ -198,6 +219,7 @@ def main():
 	crawl(URL_Frontier, maxURLs, c)
 
 	print "\nCrawl Complete"
+	print "\n", infoCount, "names + info grabbed"
 	print "Shutting Down..."
 	print "Goodbye!"
 
@@ -212,6 +234,7 @@ if __name__ == "__main__":
 		main()
 
 	except KeyboardInterrupt:
+		print "\n", infoCount, "names + info grabbed"
 		print "\nShutting Down..."
 		print "Goodbye!"
 		sys.exit(0)
