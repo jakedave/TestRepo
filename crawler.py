@@ -35,10 +35,8 @@ def normalize_link(URL):
 
 
 def init():
-	"""Initalize list of seen URLs and amount of names grabbed"""
+	"""Initalize list of seen URLs"""
 	global pastURLs
-	global infoCount
-	infoCount = 0
 	pastURLs = []
 
 
@@ -145,6 +143,7 @@ def crawl(URL_Frontier, maxURLs, c):
 	baseURL = "https://www.hvst.com"
 	size = len(URL_Frontier)
 	count = 0
+	infoCount = 0
 	while (size > 0) and (count < maxURLs):
 		# Pop URL from front
 		URL = URL_Frontier.popleft()
@@ -195,6 +194,8 @@ def crawl(URL_Frontier, maxURLs, c):
 		printProgress (count, maxURLs, prefix = '', suffix = 'Complete', decimals = 2, barLength = 100)
 		pastURLs.append(URL)
 
+	return infoCount
+
 
 def main():
 	URL_Frontier = deque()
@@ -216,7 +217,7 @@ def main():
 
 	print "Starting Crawl...\n"
 
-	crawl(URL_Frontier, maxURLs, c)
+	infoCount = crawl(URL_Frontier, maxURLs, c)
 
 	print "Crawl Complete"
 	print "\n", infoCount, "names + info grabbed"
